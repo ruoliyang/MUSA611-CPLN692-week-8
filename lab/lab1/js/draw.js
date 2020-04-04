@@ -120,7 +120,7 @@ map.on('draw:created', function (e) {
     layer.on("mouseover", function(e) {
       console.log(e.target._leaflet_id);
 //      $(`div[data-leaflet-id =${e.target._leaflet_id}]`).hide();
-      $(`div[data-leaflet-id =${e.target._leaflet_id}]`).css('background-color', 'red');
+      $(`div[data-leaflet-id =${e.target._leaflet_id}]`).css('background-color', 'blue');
     });
 
     var jhtml = $.parseHTML(`<div class="shape" data-leaflet-id=${id}><h1>Current ID:${id}</h1></div>`);
