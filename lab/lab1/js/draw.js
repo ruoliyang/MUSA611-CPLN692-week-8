@@ -111,19 +111,49 @@ map.on('draw:created', function (e) {
     var type = e.layerType; // The type of shape
     var layer = e.layer; // The Leaflet layer for the shape
     var id = L.stamp(layer); // The unique Leaflet ID for the layer
+
+    layer.bindPopup(`${id}`);
+
     console.log(layer, type, id);
-    if (myRectangle) { map.removeLayer(myRectangle); }
-    myRectangle = layer;
+    //console.log(rectangle)
+    //if (myRectangle) { map.removeLayer(myRectangle); }
+    //myRectangle = layer;
 //    myRectangles.push(layer);
-    map.addLayer(myRectangle);
+    //map.addLayer(myRectangle);
+    map.addLayer(layer);
 
     layer.on("mouseover", function(e) {
-      console.log(e.target._leaflet_id);
+      hovered = e.target._leaflet_id;
+      $(`div[data-leaflet-id =${hovered}]`).css('background-color', 'yellow');
+      //console.log(e);
+      //console.log(e.target._leaflet_id);
 //      $(`div[data-leaflet-id =${e.target._leaflet_id}]`).hide();
-      $(`div[data-leaflet-id =${e.target._leaflet_id}]`).css('background-color', 'blue');
+      //$(`div[data-leaflet-id =${e.target._leaflet_id}]`).css('background-color', 'blue');
     });
 
-    var jhtml = $.parseHTML(`<div class="shape" data-leaflet-id=${id}><h1>Current ID:${id}</h1></div>`);
+    layer.on("mouseout", function(e) {
+      hovered = e.target._leaflet_id;
+      $(`div[data-leaflet-id|=${hovered}]`).css('background-color', 'white');
+
+    //var jhtml = $.parseHTML(`<div class="shape" data-leaflet-id=${id}><h1>Current ID:${id}</h1></div>`);
+    //$('#shapes').append(jhtml);
+
+    var html = `<div class="shape" data-leaflet-id|=${id}><h1>Current ID:${id}</h1></div>`;
+    var jhtml = $.parseHTML(html);
+    console.log(html);
     $('#shapes').append(jhtml);
 
+/*
+    $(`div[data-leaflet-id|=${id}]`).click(function(e){
+      layer.openPopup()
+    });
+*/
+
+    $(`div[data-leaflet-id|=${id}]`).mouseover(function(e){
+      layer.openPopup()
+    });
+
+    $(`div[data-leaflet-id|=${id}]`).mouseout(function(e){
+      layer.openPopup()
+    });
 });

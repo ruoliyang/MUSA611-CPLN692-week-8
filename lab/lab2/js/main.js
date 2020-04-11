@@ -115,6 +115,8 @@ Task 6 (stretch): Refocus the map to roughly the bounding box of your route
 
 
 ===================== */
+https://api.mapbox.com/geocoding/v5/mapbox.places/{geocode_this}.json?access_token=pk.eyJ1IjoicnVvbGxlIiwiYSI6ImNrOHVsaWpmODBjOXAzdWpzbDVucHZzMWMifQ.bAvoHwOnkMt0bp4QzSJ-aA`
+
 
 var state = {
   position: {
@@ -171,4 +173,3 @@ $(document).ready(function() {
   });
 
 });
-
