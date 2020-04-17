@@ -115,7 +115,7 @@ Task 6 (stretch): Refocus the map to roughly the bounding box of your route
 
 
 ===================== */
-https://api.mapbox.com/geocoding/v5/mapbox.places/{geocode_this}.json?access_token=pk.eyJ1IjoicnVvbGxlIiwiYSI6ImNrOHVsaWpmODBjOXAzdWpzbDVucHZzMWMifQ.bAvoHwOnkMt0bp4QzSJ-aA`
+https://api.mapbox.com/geocoding/v5/mapbox.places/University of Pennsylvania.json?access_token=pk.eyJ1IjoicnVvbGxlIiwiYSI6ImNrOHVsaWpmODBjOXAzdWpzbDVucHZzMWMifQ.bAvoHwOnkMt0bp4QzSJ-aA`
 
 
 var state = {
@@ -132,6 +132,19 @@ var goToOrigin = _.once(function(lat, lng) {
   map.flyTo([lat, lng], 14);
 });
 
+var geolocate = function(location) {
+  var geolocateString = `https://api.mapbox.com/geocoding/v5/mapbox.places/${location}.json?access_token=pk.eyJ1IjoibnppbW1lcm1hbiIsImEiOiJjanR1NTBjeWMwZTBlM3lsbXU2d3BtYThzIn0.R0mxkEoHLh-xKk7oG0Tqxg&geometries=geojson`;
+  console.log("geolocate", geolocateString);
+  var req = $.ajax(geolocateString);
+  return req;
+};
+
+var getDirections = function(origin, destination) {
+  var directionsString = `https://api.mapbox.com/directions/v5/mapbox/cycling/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?access_token=pk.eyJ1IjoibnppbW1lcm1hbiIsImEiOiJjanR1NTBjeWMwZTBlM3lsbXU2d3BtYThzIn0.R0mxkEoHLh-xKk7oG0Tqxg&geometries=geojson`
+  console.log("directionString", directionsString);
+  var req = $.ajax(directionsString);
+  return req;
+};
 
 /* Given a lat and a long, we should create a marker, store it
  *  somewhere, and add it to the map
@@ -144,10 +157,14 @@ var updatePosition = function(lat, lng, updated) {
   goToOrigin(lat, lng);
 };
 
+var origin;
+var destination;
+
 $(document).ready(function() {
   /* This 'if' check allows us to safely ask for the user's current position */
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
+      origin = [position.coords.latitude, position.coords.longitude];
       updatePosition(position.coords.latitude, position.coords.longitude, position.timestamp);
     });
   } else {
@@ -168,8 +185,14 @@ $(document).ready(function() {
 
   // click handler for the "calculate" button (probably you want to do something with this)
   $("#calculate").click(function(e) {
-    var dest = $('#dest').val();
-    console.log(dest);
-  });
+     var dest = $('#dest').val();
+     geolocate(dest).done(function(geolocateResponse) {
+       destination = geolocateResponse.features[0].center;
+       getDirections(origin, destination).done(function(directionsResponse) {
+         geojson = turf.lineString(directionsResponse.routes[0].geometry.coordinates);
+         L.geoJSON(geojson).addTo(map);
+       });
+     });
+   });
 
 });
